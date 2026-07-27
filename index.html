@@ -9,10 +9,17 @@
     />
     <title>USCOM | Ciberseguridad e infraestructura de misión crítica</title>
     <link rel="preload" href="assets/uscom-logo.png" as="image" />
+    <link rel="preload" href="assets/intro-uscom.mp4" as="video" type="video/mp4" />
     <link rel="preload" href="assets/hero-uscom.mp4" as="video" type="video/mp4" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div class="brand-intro" data-brand-intro aria-label="Animación de entrada USCOM">
+      <video class="intro-video" data-intro-video autoplay muted playsinline preload="auto">
+        <source src="assets/intro-uscom.mp4" type="video/mp4" />
+      </video>
+    </div>
+
     <header class="site-header" data-header>
       <a class="brand" href="#inicio" aria-label="USCOM inicio">
         <span class="brand-logo">
@@ -128,7 +135,7 @@
             defensa y organizaciones que no pueden detenerse.
           </p>
           <div class="hero-actions" aria-label="Acciones principales">
-            <a class="btn primary" href="#contacto">Solicitar asesoría</a>
+            <a class="btn primary" href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Solicitar asesoría</a>
             <a class="btn secondary" href="#soluciones">Ver soluciones</a>
           </div>
         </div>
@@ -164,181 +171,120 @@
           <p>Integramos tecnología de punta con acompañamiento experto para que cada componente funcione como parte de una arquitectura coherente.</p>
         </div>
 
-        <div class="service-grid">
-          <article class="service-card">
+        <div class="carousel-shell" data-carousel>
+          <button class="carousel-btn prev" type="button" aria-label="Ver soluciones anteriores" data-carousel-prev>‹</button>
+          <div class="service-grid" data-carousel-track>
+          <article class="service-card" id="slide-ciberseguridad">
+            <figure class="solution-thumb">
+              <img src="assets/solutions/ciberseguridad.png" alt="Operaciones de ciberseguridad y monitoreo de amenazas" />
+            </figure>
             <span class="icon">01</span>
             <h3>Ciberseguridad</h3>
-            <p>Protección perimetral, seguridad de endpoints, monitoreo, respuesta y fortalecimiento de postura.</p>
+            <p>Prevención, detección, monitoreo y respuesta ante amenazas digitales.</p>
+            <div class="card-actions">
+              <a href="page.html?area=Soluciones&item=Ciberseguridad">Conocer la solución</a>
+              <a href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Hablar con un especialista</a>
+            </div>
           </article>
-          <article class="service-card">
+          <article class="service-card" id="slide-centros-datos">
+            <figure class="solution-thumb">
+              <img src="assets/solutions/centros-datos.png" alt="Centro de datos moderno con infraestructura de alto desempeño" />
+            </figure>
             <span class="icon">02</span>
-            <h3>Cloud e infraestructura</h3>
-            <p>Arquitecturas híbridas, virtualización, almacenamiento, respaldo y continuidad de negocio.</p>
+            <h3>Centros de Datos</h3>
+            <p>Infraestructura robusta, disponible y escalable para operaciones críticas.</p>
+            <div class="card-actions">
+              <a href="page.html?area=Soluciones&item=Centros%20de%20Datos">Conocer la solución</a>
+              <a href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Hablar con un especialista</a>
+            </div>
           </article>
-          <article class="service-card">
+          <article class="service-card" id="slide-redes-telecomunicaciones">
+            <figure class="solution-thumb">
+              <img src="assets/solutions/redes-telecomunicaciones.png" alt="Redes empresariales y telecomunicaciones de alto rendimiento" />
+            </figure>
             <span class="icon">03</span>
-            <h3>Redes y conectividad</h3>
-            <p>LAN, WAN, wireless, segmentación, alta disponibilidad y administración segura del tráfico.</p>
+            <h3>Redes y Telecomunicaciones</h3>
+            <p>Conectividad segura y de alto rendimiento para sedes, usuarios y nube.</p>
+            <div class="card-actions">
+              <a href="page.html?area=Soluciones&item=Redes%20y%20Telecomunicaciones">Conocer la solución</a>
+              <a href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Hablar con un especialista</a>
+            </div>
           </article>
-          <article class="service-card">
+          <article class="service-card" id="slide-desarrollo-software">
+            <figure class="solution-thumb">
+              <img src="assets/solutions/desarrollo-software.png" alt="Equipo desarrollando plataformas digitales empresariales" />
+            </figure>
             <span class="icon">04</span>
-            <h3>Centro de datos</h3>
-            <p>Diseño, implementación y optimización de ambientes preparados para cargas críticas.</p>
-          </article>
-          <article class="service-card">
-            <span class="icon">05</span>
             <h3>Desarrollo de Software</h3>
-            <p>Aplicaciones, integraciones, automatización y plataformas a la medida para procesos institucionales.</p>
+            <p>Plataformas digitales seguras, escalables y adaptadas a la operación.</p>
+            <div class="card-actions">
+              <a href="page.html?area=Soluciones&item=Desarrollo%20de%20Software">Conocer la solución</a>
+              <a href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Hablar con un especialista</a>
+            </div>
           </article>
-          <article class="service-card">
-            <span class="icon">06</span>
+          <article class="service-card" id="slide-e-learning">
+            <figure class="solution-thumb">
+              <img src="assets/solutions/e-learning.png" alt="Plataforma de aprendizaje digital y aulas virtuales" />
+            </figure>
+            <span class="icon">05</span>
             <h3>E-Learning</h3>
-            <p>Plataformas educativas, aulas virtuales, contenidos digitales y analítica de aprendizaje.</p>
+            <p>Plataformas para formación, capacitación, evaluación y analítica académica.</p>
+            <div class="card-actions">
+              <a href="page.html?area=Soluciones&item=E-Learning">Conocer la solución</a>
+              <a href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Hablar con un especialista</a>
+            </div>
           </article>
-          <article class="service-card">
+          <article class="service-card" id="slide-cloud">
+            <figure class="solution-thumb">
+              <img src="assets/solutions/cloud.png" alt="Arquitectura cloud híbrida y servicios en la nube" />
+            </figure>
+            <span class="icon">06</span>
+            <h3>Cloud</h3>
+            <p>Arquitecturas en nube pública, privada e híbrida para crecer con seguridad.</p>
+            <div class="card-actions">
+              <a href="page.html?area=Soluciones&item=Cloud">Conocer la solución</a>
+              <a href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Hablar con un especialista</a>
+            </div>
+          </article>
+          <article class="service-card" id="slide-inteligencia-analitica">
+            <figure class="solution-thumb">
+              <img src="assets/solutions/inteligencia-analitica.png" alt="Analítica de datos e inteligencia de negocios" />
+            </figure>
             <span class="icon">07</span>
             <h3>Inteligencia y Analítica</h3>
-            <p>Tableros, modelos de datos, analítica operacional y soporte para decisiones estratégicas.</p>
+            <p>Datos convertidos en conocimiento estratégico para mejores decisiones.</p>
+            <div class="card-actions">
+              <a href="page.html?area=Soluciones&item=Inteligencia%20y%20Anal%C3%ADtica">Conocer la solución</a>
+              <a href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Hablar con un especialista</a>
+            </div>
           </article>
-          <article class="service-card">
+          <article class="service-card" id="slide-seguridad-electronica-iot">
+            <figure class="solution-thumb">
+              <img src="assets/solutions/seguridad-electronica-iot.png" alt="Seguridad electrónica, sensores e IoT conectados" />
+            </figure>
             <span class="icon">08</span>
-            <h3>IoT y automatización</h3>
-            <p>Seguridad electrónica, sensores, monitoreo y control inteligente para operaciones distribuidas.</p>
+            <h3>Seguridad Electrónica e IoT</h3>
+            <p>Sistemas conectados de seguridad, monitoreo, automatización y telemetría.</p>
+            <div class="card-actions">
+              <a href="page.html?area=Soluciones&item=Seguridad%20Electr%C3%B3nica%20e%20IoT">Conocer la solución</a>
+              <a href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Hablar con un especialista</a>
+            </div>
           </article>
-        </div>
-      </section>
-
-      <section class="section sectors" id="sectores" aria-labelledby="sectors-title">
-        <div class="section-label">Sectores</div>
-        <h2 id="sectors-title">Experiencia en ambientes exigentes</h2>
-        <div class="sector-list">
-          <article>
-            <h3>Sector público</h3>
-            <p>Soluciones alineadas con compras institucionales, continuidad del servicio y protección de información sensible.</p>
-          </article>
-          <article>
-            <h3>Defensa y seguridad</h3>
-            <p>Infraestructura robusta para comunicaciones, comando, control, vigilancia y operaciones de alto impacto.</p>
-          </article>
-          <article>
-            <h3>Educación</h3>
-            <p>Plataformas digitales, conectividad, aulas virtuales y servicios administrados para instituciones educativas.</p>
-          </article>
-          <article>
-            <h3>Telecomunicaciones</h3>
-            <p>Redes de alto desempeño, monitoreo, continuidad e integración para operadores y proveedores de servicio.</p>
-          </article>
-          <article>
-            <h3>Infraestructura crítica</h3>
-            <p>Arquitecturas resilientes para salud, transporte, energía, servicios esenciales y operación permanente.</p>
-          </article>
-          <article>
-            <h3>Industria, energía y servicios públicos</h3>
-            <p>Conectividad, seguridad, analítica e IoT para operación distribuida y continuidad del servicio.</p>
-          </article>
-          <article>
-            <h3>Empresas y sector corporativo</h3>
-            <p>Modernización segura para operación, productividad, datos, cloud y soporte de usuarios empresariales.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section managed" id="administrados" aria-labelledby="managed-title">
-        <div class="section-head">
-          <div>
-            <div class="section-label">Servicios administrados</div>
-            <h2 id="managed-title">Operación continua para plataformas críticas.</h2>
           </div>
-          <p>USCOM puede administrar, monitorear, soportar y evolucionar componentes tecnológicos para que su equipo se enfoque en la misión del negocio.</p>
+          <button class="carousel-btn next" type="button" aria-label="Ver más soluciones" data-carousel-next>›</button>
         </div>
-        <div class="managed-grid">
-          <article><h3>Infraestructura Administrada</h3><p>Servidores, almacenamiento, respaldo, disponibilidad y continuidad.</p></article>
-          <article><h3>Ciberseguridad Administrada</h3><p>Monitoreo, controles, respuesta, hardening y mejora de postura.</p></article>
-          <article><h3>Redes Administradas</h3><p>LAN, WAN, wireless, segmentación, rendimiento y gestión segura.</p></article>
-          <article><h3>Cloud Administrado</h3><p>Operación de ambientes híbridos, costos, respaldo y escalabilidad.</p></article>
-          <article><h3>Plataformas SaaS</h3><p>Implementación, soporte funcional, adopción y gobierno de plataformas.</p></article>
-          <article><h3>Soporte y Mantenimiento</h3><p>Atención, mantenimiento preventivo, documentación y niveles de servicio.</p></article>
-        </div>
-      </section>
-
-      <section class="section method" id="proyectos" aria-labelledby="method-title">
-        <div class="method-copy">
-          <div class="section-label">Proyectos</div>
-          <h2 id="method-title">De la estrategia a la operación, con trazabilidad completa.</h2>
-          <p>
-            Documentamos casos, proyectos destacados, experiencia por sector y un modelo de ejecución orientado a resultados medibles.
-          </p>
-        </div>
-        <ol class="steps">
-          <li>
-            <span>Diagnosticar</span>
-            <p>Evaluamos riesgos, estado actual, dependencias y metas operativas.</p>
-          </li>
-          <li>
-            <span>Arquitectar</span>
-            <p>Definimos la solución, componentes, integraciones y plan de despliegue.</p>
-          </li>
-          <li>
-            <span>Implementar</span>
-            <p>Ejecutamos con pruebas, documentación y controles de calidad.</p>
-          </li>
-          <li>
-            <span>Acompañar</span>
-            <p>Soporte, optimización y roadmap para mantener la plataforma vigente.</p>
-          </li>
-        </ol>
-      </section>
-
-      <section class="section about" id="nosotros" aria-labelledby="about-title">
-        <div class="section-label">Nosotros</div>
-        <div class="about-grid">
-          <div>
-            <h2 id="about-title">Capacidades, aliados y compromiso para acompañar el crecimiento tecnológico.</h2>
-            <p>
-              USCOM combina experiencia técnica, presencia internacional, alianzas tecnológicas y enfoque de calidad
-              para ejecutar proyectos exigentes en organizaciones públicas y privadas.
-            </p>
-          </div>
-          <div class="about-list">
-            <span>Quiénes Somos</span>
-            <span>Nuestra Historia</span>
-            <span>Presencia Internacional</span>
-            <span>Capacidades</span>
-            <span>Aliados Tecnológicos</span>
-            <span>Calidad y Compromiso</span>
-          </div>
+        <div class="carousel-dots" aria-label="Navegación de soluciones">
+          <button type="button" aria-label="Ir a Ciberseguridad" data-carousel-dot="0"></button>
+          <button type="button" aria-label="Ir a Centros de Datos" data-carousel-dot="1"></button>
+          <button type="button" aria-label="Ir a Redes y Telecomunicaciones" data-carousel-dot="2"></button>
+          <button type="button" aria-label="Ir a Desarrollo de Software" data-carousel-dot="3"></button>
+          <button type="button" aria-label="Ir a E-Learning" data-carousel-dot="4"></button>
+          <button type="button" aria-label="Ir a Cloud" data-carousel-dot="5"></button>
+          <button type="button" aria-label="Ir a Inteligencia y Analítica" data-carousel-dot="6"></button>
+          <button type="button" aria-label="Ir a Seguridad Electrónica e IoT" data-carousel-dot="7"></button>
         </div>
       </section>
 
-      <section class="cta" id="contacto" aria-labelledby="contact-title">
-        <div>
-          <div class="section-label">Contacto</div>
-          <h2 id="contact-title">Conversemos sobre su siguiente proyecto tecnológico.</h2>
-          <p>
-            Cuente con USCOM para estructurar una solución segura, escalable y lista para operar en escenarios de alta exigencia.
-          </p>
-        </div>
-        <form class="contact-form" aria-label="Formulario de contacto">
-          <div class="form-tabs" aria-label="Tipos de solicitud">
-            <span>Formulario de Contacto</span>
-            <span>Asesoría</span>
-            <span>Cotización</span>
-          </div>
-          <label>
-            Nombre
-            <input type="text" name="nombre" autocomplete="name" placeholder="Su nombre" />
-          </label>
-          <label>
-            Correo
-            <input type="email" name="correo" autocomplete="email" placeholder="correo@empresa.com" />
-          </label>
-          <label>
-            Mensaje
-            <textarea name="mensaje" rows="4" placeholder="Cuéntenos qué necesita proteger, conectar o modernizar"></textarea>
-          </label>
-          <button class="btn primary" type="submit">Enviar solicitud</button>
-        </form>
-      </section>
     </main>
 
     <footer class="footer">
