@@ -41,11 +41,11 @@ const sendJson = (response, statusCode, payload) => {
 
 const escapeHtml = (value) =>
   String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 const normalizeField = (value, maxLength = 900) =>
   String(value || "")
@@ -185,56 +185,6 @@ const sendContactEmail = (email) => {
   );
 };
 
-const fetchJson = (url) =>
-  new Promise((resolve, reject) => {
-    https
-      .get(url, (res) => {
-        let data = "";
-        res.on("data", (chunk) => {
-          data += chunk;
-        });
-        res.on("end", () => {
-          try {
-            resolve(JSON.parse(data));
-          } catch (error) {
-            reject(error);
-          }
-        });
-      })
-      .on("error", reject);
-  });
-
-const translateText = async (text, target) => {
-  if (!text.trim() || target === "es") {
-    return text;
-  }
-
-  const url =
-    "https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=" +
-    encodeURIComponent(target) +
-    "&dt=t&q=" +
-    encodeURIComponent(text);
-  const data = await fetchJson(url);
-  return Array.isArray(data?.[0]) ? data[0].map((part) => part[0]).join("") : text;
-};
-
-const translateTexts = async (texts, target) => {
-  const translated = [];
-  const concurrency = 6;
-  let cursor = 0;
-
-  const worker = async () => {
-    while (cursor < texts.length) {
-      const index = cursor;
-      cursor += 1;
-      translated[index] = await translateText(texts[index], target);
-    }
-  };
-
-  await Promise.all(Array.from({ length: concurrency }, worker));
-  return translated;
-};
-
 const server = http.createServer((request, response) => {
   const url = new URL(request.url, `http://${request.headers.host}`);
 
@@ -272,36 +222,6 @@ const server = http.createServer((request, response) => {
             ? "El envío de correo aún no está configurado en el servidor."
             : "No fue posible enviar la solicitud. Intente nuevamente."
         });
-      });
-    return;
-  }
-
-  if (url.pathname === "/api/translate" && request.method === "POST") {
-    readRequestBody(request)
-      .then((body) => {
-        const payload = JSON.parse(body || "{}");
-        const target = String(payload.target || "es").toLowerCase();
-        const texts = Array.isArray(payload.texts) ? payload.texts.map((text) => String(text)) : [];
-
-        if (!["en", "de", "pt"].includes(target) || texts.length > 250) {
-          response.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
-          response.end(JSON.stringify({ error: "Invalid translation request" }));
-          return null;
-        }
-
-        return translateTexts(texts, target);
-      })
-      .then((translations) => {
-        if (!translations) {
-          return;
-        }
-
-        response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-        response.end(JSON.stringify({ translations }));
-      })
-      .catch(() => {
-        response.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
-        response.end(JSON.stringify({ error: "Translation failed" }));
       });
     return;
   }

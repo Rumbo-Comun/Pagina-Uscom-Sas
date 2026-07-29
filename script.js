@@ -289,9 +289,27 @@ const getCurrentLanguage = () => {
     return storedLanguage;
   }
 
+  const ownCookie = document.cookie.match(/(?:^|;\s*)uscomLanguage=([^;]+)/);
+
+  if (ownCookie?.[1] && languageNames[ownCookie[1]]) {
+    return ownCookie[1];
+  }
+
   const match = document.cookie.match(/(?:^|;\s*)googtrans=\/es\/([^;]+)/);
   return languageNames[match?.[1]] ? match[1] : "es";
 };
+
+const persistSiteLanguage = (language) => {
+  const maxAge = 60 * 60 * 24 * 365;
+  window.localStorage.setItem("uscomLanguage", language);
+  document.cookie = `uscomLanguage=${language};path=/;max-age=${maxAge}`;
+
+  if (window.location.hostname.endsWith("uscom.net.co")) {
+    document.cookie = `uscomLanguage=${language};path=/;domain=.uscom.net.co;max-age=${maxAge};SameSite=Lax`;
+  }
+};
+
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const setTranslationCookie = (language) => {
   const value = language === "es" ? "/es/es" : `/es/${language}`;
@@ -304,9 +322,27 @@ const setTranslationCookie = (language) => {
 
 const clearTranslationCookie = () => {
   document.cookie = "googtrans=;path=/;max-age=0";
+  document.cookie = "googtrans=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+  if (window.location.hostname.endsWith("uscom.net.co")) {
+    document.cookie = "googtrans=;path=/;domain=.uscom.net.co;max-age=0";
+    document.cookie = "googtrans=;path=/;domain=dev.uscom.net.co;max-age=0";
+  }
+
   if (window.location.hostname.includes(".")) {
     document.cookie = `googtrans=;path=/;domain=${window.location.hostname};max-age=0`;
   }
+};
+
+const resetStoredLanguage = () => {
+  window.localStorage.setItem("uscomLanguage", "es");
+  document.cookie = "uscomLanguage=es;path=/;max-age=31536000";
+
+  if (window.location.hostname.endsWith("uscom.net.co")) {
+    document.cookie = "uscomLanguage=es;path=/;domain=.uscom.net.co;max-age=31536000;SameSite=Lax";
+  }
+
+  clearTranslationCookie();
 };
 
 const updateLanguageControl = (language) => {
@@ -329,7 +365,7 @@ const getTranslatableTextNodes = () => {
         return NodeFilter.FILTER_REJECT;
       }
 
-      if (parent.closest("#google_translate_element, .brand-intro, .intro-video, .hero-bg")) {
+      if (parent.closest(".language-switcher, .brand-intro, .intro-video, .hero-bg")) {
         return NodeFilter.FILTER_REJECT;
       }
 
@@ -369,7 +405,7 @@ const applyDictionaryTranslation = (language) => {
     if (!translatedText) {
       translatedText = normalizedText;
       dictionaryEntries.forEach(([sourceText, targetText]) => {
-        translatedText = translatedText.replaceAll(sourceText, targetText);
+        translatedText = translatedText.replace(new RegExp(escapeRegExp(sourceText), "g"), targetText);
       });
     }
 
@@ -383,7 +419,7 @@ const applyDictionaryTranslation = (language) => {
 
 const applySiteLanguage = (language) => {
   isApplyingLanguage = true;
-  window.localStorage.setItem("uscomLanguage", language);
+  persistSiteLanguage(language);
 
   if (language === "es") {
     clearTranslationCookie();
@@ -413,12 +449,13 @@ if (languageSwitcher && languageTrigger && languageMenu && languageLabel) {
       const selectedLanguage = button.dataset.languageOption;
       closeLanguageMenu();
 
-      if (selectedLanguage === getCurrentLanguage()) {
-        return;
+      persistSiteLanguage(selectedLanguage);
+
+      if (selectedLanguage === "es") {
+        resetStoredLanguage();
       }
 
-      window.localStorage.setItem("uscomLanguage", selectedLanguage);
-      window.location.reload();
+      window.location.replace(window.location.href);
     });
   });
 
@@ -1265,16 +1302,16 @@ const getCapabilitySummary = (capability, solutionName) =>
 
 const escapeAttribute = (value) =>
   String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 
 const escapeHtml = (value) =>
   String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 
 const successCaseFilters = [
   "Todos",
