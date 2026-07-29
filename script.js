@@ -125,6 +125,13 @@ const translationDictionary = {
     "Propuesta de valor": "Value Proposition",
     "Alcance técnico": "Technical Scope",
     "Casos de uso": "Use Cases",
+    "Experiencia": "Experience",
+    "Experiencia que genera confianza": "Experience that Builds Trust",
+    "EXPERIENCIA QUE GENERA CONFIANZA": "EXPERIENCE THAT BUILDS TRUST",
+    "USCOM SAS ha participado en proyectos tecnolÃ³gicos para organizaciones pÃºblicas, privadas, de seguridad, telecomunicaciones, cooperaciÃ³n internacional e infraestructura tecnolÃ³gica, ejecutando actividades conforme al alcance contractual y los requerimientos tÃ©cnicos definidos para cada proyecto.": "USCOM SAS has participated in technology projects for public, private, security, telecommunications, international cooperation and technology infrastructure organizations, executing activities according to the contractual scope and the technical requirements defined for each project.",
+    "USCOM SAS ha participado en proyectos tecnolÃ³gicos para organizaciones pÃºblicas, privadas, de seguridad, telecomunicaciones, cooperaciÃ³n internacional e infraestructura tecnolÃ³gica, ejecutando actividades conforme al alcance contractual y los requerimientos tÃ©cnicos definidos para cada proyecto": "USCOM SAS has participated in technology projects for public, private, security, telecommunications, international cooperation and technology infrastructure organizations, executing activities according to the contractual scope and the technical requirements defined for each project",
+    "Estos casos se presentan segÃºn el objeto contractual, el alcance ejecutado, las tecnologÃ­as o componentes realmente implementados, los servicios prestados y el resultado obtenido.": "These cases are presented according to the contractual object, the executed scope, the technologies or components actually implemented, the services provided and the result obtained.",
+    "Estos casos se presentan segÃºn el objeto contractual, el alcance ejecutado, las tecnologÃ­as o componentes realmente implementados, los servicios prestados y el resultado obtenido": "These cases are presented according to the contractual object, the executed scope, the technologies or components actually implemented, the services provided and the result obtained",
     "Mensaje principal, dolor que resuelve y diferenciadores de USCOM.": "Main message, pain point solved and USCOM differentiators.",
     "Componentes, arquitectura, servicios, integración y operación.": "Components, architecture, services, integration and operation.",
     "Escenarios concretos por sector y beneficios medibles.": "Specific scenarios by sector and measurable benefits.",
@@ -283,6 +290,12 @@ const translationDictionary = {
 };
 
 const getCurrentLanguage = () => {
+  const urlLanguage = new URLSearchParams(window.location.search).get("lang");
+
+  if (urlLanguage && languageNames[urlLanguage]) {
+    return urlLanguage;
+  }
+
   const storedLanguage = window.localStorage.getItem("uscomLanguage");
 
   if (storedLanguage && languageNames[storedLanguage]) {
@@ -295,8 +308,13 @@ const getCurrentLanguage = () => {
     return ownCookie[1];
   }
 
-  const match = document.cookie.match(/(?:^|;\s*)googtrans=\/es\/([^;]+)/);
-  return languageNames[match?.[1]] ? match[1] : "es";
+  return "es";
+};
+
+const buildLanguageUrl = (language) => {
+  const url = new URL(window.location.href);
+  url.searchParams.set("lang", language);
+  return url.toString();
 };
 
 const persistSiteLanguage = (language) => {
@@ -343,6 +361,22 @@ const resetStoredLanguage = () => {
   }
 
   clearTranslationCookie();
+};
+
+const preserveLanguageLinks = () => {
+  const currentLanguage = getCurrentLanguage();
+
+  document.querySelectorAll("a[href]").forEach((link) => {
+    const rawHref = link.getAttribute("href");
+
+    if (!rawHref || rawHref.startsWith("#") || rawHref.startsWith("http") || rawHref.startsWith("mailto:") || rawHref.startsWith("tel:")) {
+      return;
+    }
+
+    const url = new URL(rawHref, window.location.href);
+    url.searchParams.set("lang", currentLanguage);
+    link.href = url.toString();
+  });
 };
 
 const updateLanguageControl = (language) => {
@@ -438,6 +472,7 @@ const applySiteLanguage = (language) => {
 if (languageSwitcher && languageTrigger && languageMenu && languageLabel) {
   const currentLanguage = getCurrentLanguage();
   updateLanguageControl(currentLanguage);
+  preserveLanguageLinks();
 
   const closeLanguageMenu = () => {
     languageMenu.hidden = true;
@@ -455,7 +490,7 @@ if (languageSwitcher && languageTrigger && languageMenu && languageLabel) {
         resetStoredLanguage();
       }
 
-      window.location.replace(window.location.href);
+      window.location.replace(buildLanguageUrl(selectedLanguage));
     });
   });
 
@@ -1725,6 +1760,8 @@ if (pageHero) {
 
 window.addEventListener("load", () => {
   const currentLanguage = getCurrentLanguage();
+  persistSiteLanguage(currentLanguage);
+  preserveLanguageLinks();
 
   if (currentLanguage === "es") {
     restoreOriginalLanguage();
@@ -1746,6 +1783,7 @@ if (languageSwitcher) {
 
     window.clearTimeout(languageObserver.timer);
     languageObserver.timer = window.setTimeout(() => {
+      preserveLanguageLinks();
       applySiteLanguage(currentLanguage);
     }, 120);
   });
