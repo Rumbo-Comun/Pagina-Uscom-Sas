@@ -169,7 +169,10 @@ const translationDictionary = {
     "Seguridad Privada": "Private Security",
     "Ejército Nacional de Colombia": "National Army of Colombia",
     "Reconstrucción de infraestructura Décima Octava Brigada de Arauca.": "Infrastructure Reconstruction of the Eighteenth Brigade of Arauca.",
-    "Defensa": "Defense"
+    "Defensa": "Defense",
+    "© 2026. Todos los derechos reservados.": "© 2026. All rights reserved.",
+    "Términos y condiciones.": "Terms and conditions.",
+    "Hecho por": "Made by"
   },
   de: {
     "Inicio": "Startseite",
@@ -589,6 +592,20 @@ const carouselPrev = document.querySelector("[data-carousel-prev]");
 const carouselNext = document.querySelector("[data-carousel-next]");
 const carouselDots = document.querySelectorAll("[data-carousel-dot]");
 const logoCards = document.querySelectorAll(".logo-card");
+
+document.querySelectorAll(".footer").forEach((footer) => {
+  footer.innerHTML = `
+    <div class="footer-bg" aria-hidden="true"></div>
+    <div class="footer-content">
+      <p>© 2026. Todos los derechos reservados. <a href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Términos y condiciones.</a></p>
+      <div class="footer-made">
+        <span>Hecho por</span>
+        <strong>Gobierno y Defensa</strong>
+        <i aria-hidden="true"></i>
+        <img src="assets/uscom-emblem.jpeg" alt="USCOM S.A.S. Gobierno y Defensa" />
+      </div>
+    </div>`;
+});
 
 logoCards.forEach((card) => {
   const image = card.querySelector("img");
