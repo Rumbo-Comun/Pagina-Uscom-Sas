@@ -354,15 +354,6 @@ const setTextNodeValue = (node, value) => {
   node.nodeValue = `${leadingSpace}${value}${trailingSpace}`;
 };
 
-const setTranslationCookie = (language) => {
-  const value = language === "es" ? "/es/es" : `/es/${language}`;
-  const maxAge = 60 * 60 * 24 * 365;
-  document.cookie = `googtrans=${value};path=/;max-age=${maxAge}`;
-  if (window.location.hostname.includes(".")) {
-    document.cookie = `googtrans=${value};path=/;domain=${window.location.hostname};max-age=${maxAge}`;
-  }
-};
-
 const clearTranslationCookie = () => {
   document.cookie = "googtrans=;path=/;max-age=0";
   document.cookie = "googtrans=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT";
@@ -562,6 +553,12 @@ if (languageSwitcher && languageTrigger && languageMenu && languageLabel) {
 
       if (selectedLanguage === "es") {
         resetStoredLanguage();
+        cleanLanguageUrl();
+        preserveLanguageLinks();
+        restoreOriginalLanguage();
+        updateLanguageControl("es");
+        window.setTimeout(() => window.location.reload(), 80);
+        return;
       }
 
       applySiteLanguage(selectedLanguage);
