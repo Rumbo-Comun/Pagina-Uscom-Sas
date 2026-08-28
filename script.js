@@ -294,12 +294,6 @@ const translationDictionary = {
 };
 
 const getCurrentLanguage = () => {
-  const urlLanguage = new URLSearchParams(window.location.search).get("lang");
-
-  if (urlLanguage && languageNames[urlLanguage]) {
-    return urlLanguage;
-  }
-
   const storedLanguage = window.localStorage.getItem("uscomLanguage");
 
   if (storedLanguage && languageNames[storedLanguage]) {
@@ -328,6 +322,7 @@ const cleanLanguageUrl = () => {
 
 const persistSiteLanguage = (language) => {
   const maxAge = 60 * 60 * 24 * 365;
+  clearTranslationCookie();
   window.localStorage.setItem("uscomLanguage", language);
   document.cookie = `uscomLanguage=${language};path=/;max-age=${maxAge}`;
 
@@ -337,6 +332,27 @@ const persistSiteLanguage = (language) => {
 };
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const reverseEnglishEntries = Object.entries(translationDictionary.en || {})
+  .map(([sourceText, targetText]) => [targetText, sourceText])
+  .sort((a, b) => b[0].length - a[0].length);
+
+const recoverSpanishText = (value) => {
+  const normalizedText = value.replace(/\s+/g, " ").trim();
+  let recoveredText = normalizedText;
+
+  reverseEnglishEntries.forEach(([targetText, sourceText]) => {
+    recoveredText = recoveredText.replace(new RegExp(escapeRegExp(targetText), "g"), sourceText);
+  });
+
+  return recoveredText;
+};
+
+const setTextNodeValue = (node, value) => {
+  const leadingSpace = node.nodeValue.match(/^\s*/)?.[0] || "";
+  const trailingSpace = node.nodeValue.match(/\s*$/)?.[0] || "";
+  node.nodeValue = `${leadingSpace}${value}${trailingSpace}`;
+};
 
 const setTranslationCookie = (language) => {
   const value = language === "es" ? "/es/es" : `/es/${language}`;
@@ -478,8 +494,11 @@ const getTranslatableTextNodes = () => {
 
 const restoreOriginalLanguage = () => {
   getTranslatableTextNodes().forEach((node) => {
-    if (originalTextNodes.has(node)) {
-      node.nodeValue = originalTextNodes.get(node);
+    const originalText = originalTextNodes.get(node) || recoverSpanishText(node.nodeValue);
+
+    if (originalText) {
+      originalTextNodes.set(node, originalText);
+      setTextNodeValue(node, originalText);
     }
   });
 };
@@ -489,7 +508,7 @@ const applyDictionaryTranslation = (language) => {
   const dictionaryEntries = Object.entries(dictionary).sort((a, b) => b[0].length - a[0].length);
 
   getTranslatableTextNodes().forEach((node) => {
-    const originalText = originalTextNodes.get(node) || node.nodeValue;
+    const originalText = originalTextNodes.get(node) || recoverSpanishText(node.nodeValue);
     const normalizedText = originalText.replace(/\s+/g, " ").trim();
     let translatedText = dictionary[normalizedText];
 
@@ -503,9 +522,7 @@ const applyDictionaryTranslation = (language) => {
     }
 
     if (translatedText) {
-      const leadingSpace = node.nodeValue.match(/^\s*/)?.[0] || "";
-      const trailingSpace = node.nodeValue.match(/\s*$/)?.[0] || "";
-      node.nodeValue = `${leadingSpace}${translatedText}${trailingSpace}`;
+      setTextNodeValue(node, translatedText);
     }
   });
 };
