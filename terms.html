@@ -14,7 +14,7 @@
     <style>
       .language-trigger{min-height:42px;display:inline-flex;align-items:center;gap:7px;padding:0 9px;border:1px solid rgba(201,159,93,.24);border-radius:8px;color:inherit;background:rgba(255,255,255,.08);font:inherit;font-weight:850;cursor:pointer}.language-trigger svg{width:17px;height:17px;fill:none!important;stroke:currentColor!important}.language-trigger span{font-size:.74rem;line-height:1;white-space:nowrap}.language-menu{position:absolute;top:calc(100% + 10px);right:0;z-index:30;width:150px;padding:8px;border:1px solid rgba(142,106,58,.24);border-radius:8px;background:rgba(250,247,241,.98);box-shadow:0 24px 60px rgba(20,16,12,.18)}.language-menu button{width:100%;min-height:38px;border:0;border-radius:8px;color:#17130f;background:transparent;font:inherit;font-size:.82rem;font-weight:850;cursor:pointer}
     </style>
-    <link rel="stylesheet" href="styles.css?v=terms-v2" />
+    <link rel="stylesheet" href="styles.css?v=company-menu-v1" />
   </head>
   <body>
     <header class="site-header is-scrolled" data-header>
@@ -46,8 +46,14 @@
           </div>
         </div>
         <a class="nav-home" href="page.html?area=Proyectos&item=Casos%20de%20%C3%89xito">Casos de Éxito</a>
-        <a class="nav-home" href="page.html?area=Nosotros&item=Qui%C3%A9nes%20Somos">Nosotros</a>
         <a class="nav-home" href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Contacto</a>
+        <div class="nav-item">
+          <button class="nav-parent" type="button" aria-expanded="false">Empresa</button>
+          <div class="mega-menu company-menu" hidden>
+            <a href="page.html?area=Nosotros&item=Qui%C3%A9nes%20Somos">Nosotros</a>
+            <a href="https://crm.usc-ict.com/crm/login">Portal Corporativo</a>
+          </div>
+        </div>
         <div class="language-switcher" data-language-switcher>
           <button class="language-trigger" type="button" aria-label="Seleccionar idioma" aria-expanded="false" data-language-trigger>
             <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/></svg>
@@ -122,6 +128,6 @@
       <a href="https://uscom.net.co/">uscom.net.co</a>
     </footer>
 
-    <script src="script.js?v=terms-v2"></script>
+    <script src="script.js?v=company-menu-v1"></script>
   </body>
 </html>

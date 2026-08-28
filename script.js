@@ -31,6 +31,7 @@ const translationDictionary = {
     "Inteligencia y Analítica": "Intelligence and Analytics",
     "Seguridad Electrónica e IoT": "Electronic Security and IoT",
     "Obra Civil": "Civil Works",
+    "Portal Corporativo": "Corporate Portal",
     "Solicitar asesoría": "Request Advisory",
     "Ver soluciones": "View Solutions",
     "Conocer la solución": "Explore Solution",
