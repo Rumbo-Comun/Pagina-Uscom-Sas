@@ -226,7 +226,21 @@ const server = http.createServer((request, response) => {
     return;
   }
 
-  const requestedPath = url.pathname === "/" ? "/index.html" : url.pathname;
+  const cleanPath = url.pathname.replace(/\/+$/, "") || "/";
+  const isCleanPageRoute =
+    cleanPath === "/contacto" ||
+    cleanPath === "/nosotros" ||
+    cleanPath === "/casos-de-exito" ||
+    cleanPath.startsWith("/casos-de-exito/") ||
+    cleanPath.startsWith("/soluciones/");
+  const requestedPath =
+    cleanPath === "/"
+      ? "/index.html"
+      : cleanPath === "/terminos-y-condiciones"
+        ? "/terms.html"
+        : isCleanPageRoute
+          ? "/page.html"
+          : url.pathname;
   const filePath = path.normalize(path.join(root, requestedPath));
 
   if (!filePath.startsWith(root)) {

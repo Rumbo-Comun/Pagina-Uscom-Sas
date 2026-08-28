@@ -315,10 +315,15 @@ const getCurrentLanguage = () => {
   return "es";
 };
 
-const buildLanguageUrl = (language) => {
+const cleanLanguageUrl = () => {
   const url = new URL(window.location.href);
-  url.searchParams.set("lang", language);
-  return url.toString();
+
+  if (!url.searchParams.has("lang")) {
+    return;
+  }
+
+  url.searchParams.delete("lang");
+  window.history.replaceState({}, "", url.toString());
 };
 
 const persistSiteLanguage = (language) => {
@@ -367,9 +372,59 @@ const resetStoredLanguage = () => {
   clearTranslationCookie();
 };
 
-const preserveLanguageLinks = () => {
-  const currentLanguage = getCurrentLanguage();
+const routeSlugMap = {
+  ciberseguridad: "Ciberseguridad",
+  "centros-de-datos": "Centros de Datos",
+  "redes-y-telecomunicaciones": "Redes y Telecomunicaciones",
+  "desarrollo-de-software": "Desarrollo de Software",
+  "e-learning": "E-Learning",
+  cloud: "Cloud",
+  "inteligencia-y-analitica": "Inteligencia y Analítica",
+  "seguridad-electronica-e-iot": "Seguridad Electrónica e IoT",
+  "obra-civil": "Obra Civil"
+};
 
+const getRouteState = () => {
+  const params = new URLSearchParams(window.location.search);
+  const explicitArea = params.get("area");
+  const explicitItem = params.get("item");
+  const explicitCase = params.get("case");
+
+  if (explicitArea || explicitItem || explicitCase) {
+    return {
+      area: explicitArea || "USCOM",
+      item: explicitItem || "Página interna",
+      caseSlug: explicitCase || ""
+    };
+  }
+
+  const path = decodeURIComponent(window.location.pathname).replace(/\/+$/, "") || "/";
+  const segments = path.split("/").filter(Boolean);
+
+  if (path === "/contacto") {
+    return { area: "Contacto", item: "Solicitar Asesoría", caseSlug: "" };
+  }
+
+  if (path === "/nosotros") {
+    return { area: "Nosotros", item: "Quiénes Somos", caseSlug: "" };
+  }
+
+  if (path === "/casos-de-exito") {
+    return { area: "Proyectos", item: "Casos de Éxito", caseSlug: "" };
+  }
+
+  if (segments[0] === "casos-de-exito" && segments[1]) {
+    return { area: "Proyectos", item: "Casos de Éxito", caseSlug: segments[1] };
+  }
+
+  if (segments[0] === "soluciones" && routeSlugMap[segments[1]]) {
+    return { area: "Soluciones", item: routeSlugMap[segments[1]], caseSlug: "" };
+  }
+
+  return { area: "USCOM", item: "Página interna", caseSlug: "" };
+};
+
+const preserveLanguageLinks = () => {
   document.querySelectorAll("a[href]").forEach((link) => {
     const rawHref = link.getAttribute("href");
 
@@ -378,8 +433,8 @@ const preserveLanguageLinks = () => {
     }
 
     const url = new URL(rawHref, window.location.href);
-    url.searchParams.set("lang", currentLanguage);
-    link.href = url.toString();
+    url.searchParams.delete("lang");
+    link.setAttribute("href", `${url.pathname}${url.search}${url.hash}`);
   });
 };
 
@@ -488,13 +543,13 @@ if (languageSwitcher && languageTrigger && languageMenu && languageLabel) {
       const selectedLanguage = button.dataset.languageOption;
       closeLanguageMenu();
 
-      persistSiteLanguage(selectedLanguage);
-
       if (selectedLanguage === "es") {
         resetStoredLanguage();
       }
 
-      window.location.replace(buildLanguageUrl(selectedLanguage));
+      applySiteLanguage(selectedLanguage);
+      cleanLanguageUrl();
+      preserveLanguageLinks();
     });
   });
 
@@ -598,12 +653,12 @@ document.querySelectorAll(".footer").forEach((footer) => {
   footer.innerHTML = `
     <div class="footer-bg" aria-hidden="true"></div>
     <div class="footer-content">
-      <p>© 2026. Todos los derechos reservados. <a href="terms.html">Términos y condiciones.</a></p>
+      <p>© 2026. Todos los derechos reservados. <a href="/terminos-y-condiciones">Términos y condiciones.</a></p>
       <div class="footer-made">
-        <span>Hecho por</span>
-        <strong>Gobierno y Defensa</strong>
+        <span>Desarrollado por</span>
+        <strong>USCOM S.A.S.</strong>
         <i aria-hidden="true"></i>
-        <img src="assets/uscom-emblem.jpeg" alt="USCOM S.A.S. Gobierno y Defensa" />
+        <img src="/assets/uscom-emblem.jpeg" alt="USCOM S.A.S. Gobierno y Defensa" />
       </div>
     </div>`;
 });
@@ -932,7 +987,7 @@ const sectorApplication = (key, description) => ({ key, description });
 
 const solutionContent = {
   "Ciberseguridad": {
-    image: "assets/solutions/ciberseguridad.png",
+    image: "/assets/solutions/ciberseguridad.png",
     imageAlt: "Operaciones de ciberseguridad y monitoreo de amenazas",
     description:
       "Protegemos la información, infraestructura y continuidad operativa de las organizaciones mediante soluciones integrales de prevención, detección, monitoreo y respuesta ante amenazas digitales.",
@@ -969,7 +1024,7 @@ const solutionContent = {
     ]
   },
   "Centros de Datos": {
-    image: "assets/solutions/centros-datos.png",
+    image: "/assets/solutions/centros-datos.png",
     imageAlt: "Centro de datos moderno con infraestructura de alto desempeño",
     description:
       "Diseñamos, implementamos y optimizamos infraestructuras tecnológicas de alto desempeño, orientadas a garantizar disponibilidad, escalabilidad, seguridad y continuidad operativa.",
@@ -1009,7 +1064,7 @@ const solutionContent = {
     ]
   },
   "Redes y Telecomunicaciones": {
-    image: "assets/solutions/redes-telecomunicaciones.png",
+    image: "/assets/solutions/redes-telecomunicaciones.png",
     imageAlt: "Redes empresariales y telecomunicaciones de alto rendimiento",
     description:
       "Implementamos soluciones de conectividad seguras y de alto rendimiento para integrar usuarios, sedes, aplicaciones, centros de datos y servicios en la nube.",
@@ -1048,7 +1103,7 @@ const solutionContent = {
     ]
   },
   "Desarrollo de Software": {
-    image: "assets/solutions/desarrollo-software.png",
+    image: "/assets/solutions/desarrollo-software.png",
     imageAlt: "Equipo desarrollando plataformas digitales empresariales",
     description:
       "Diseñamos y desarrollamos plataformas digitales adaptadas a las necesidades operativas y estratégicas de cada organización, utilizando arquitecturas modernas, seguras y escalables.",
@@ -1086,7 +1141,7 @@ const solutionContent = {
     ]
   },
   "E-Learning": {
-    image: "assets/solutions/e-learning.png",
+    image: "/assets/solutions/e-learning.png",
     imageAlt: "Plataforma de aprendizaje digital y aulas virtuales",
     description:
       "Desarrollamos plataformas integrales para la gestión de procesos de formación, capacitación y evaluación, adaptadas a instituciones educativas, entidades públicas y organizaciones privadas.",
@@ -1122,7 +1177,7 @@ const solutionContent = {
     ]
   },
   "Cloud": {
-    image: "assets/solutions/cloud.png",
+    image: "/assets/solutions/cloud.png",
     imageAlt: "Arquitectura cloud híbrida y servicios en la nube",
     description:
       "Diseñamos e implementamos arquitecturas en la nube que permiten optimizar recursos tecnológicos, mejorar la disponibilidad y facilitar el crecimiento de las organizaciones.",
@@ -1160,7 +1215,7 @@ const solutionContent = {
     ]
   },
   "Inteligencia y Analítica": {
-    image: "assets/solutions/inteligencia-analitica.png",
+    image: "/assets/solutions/inteligencia-analitica.png",
     imageAlt: "Analítica de datos e inteligencia de negocios",
     description:
       "Integramos tecnologías para transformar grandes volúmenes de información en conocimiento estratégico, facilitando la identificación de patrones, tendencias, riesgos y oportunidades.",
@@ -1197,7 +1252,7 @@ const solutionContent = {
     ]
   },
   "Seguridad Electrónica e IoT": {
-    image: "assets/solutions/seguridad-electronica-iot.png",
+    image: "/assets/solutions/seguridad-electronica-iot.png",
     imageAlt: "Seguridad electrónica, sensores e IoT conectados",
     description:
       "Integramos sistemas inteligentes de seguridad, monitoreo y automatización que conectan dispositivos, sensores y plataformas para mejorar el control y la eficiencia operativa.",
@@ -1236,7 +1291,7 @@ const solutionContent = {
     ]
   },
   "Obra Civil": {
-    image: "assets/solutions/obra-civil.png",
+    image: "/assets/solutions/obra-civil.png",
     imageAlt: "Obra civil, mantenimiento y atención de siniestros",
     description:
       "Ejecutamos soluciones de obra civil para mantenimiento, construcción, adecuación y atención de siniestros en infraestructura física, con enfoque técnico, seguro y orientado a la continuidad operativa.",
@@ -1393,7 +1448,7 @@ const SuccessCaseCard = (caseItem, summaryLength) => `
       <p class="success-case-client"><strong>Cliente:</strong> ${escapeHtml(caseItem.client)}</p>
       <p class="success-case-summary">${escapeHtml(getCardSummary(caseItem.description, summaryLength))}</p>
     </div>
-    <a class="success-case-link" href="page.html?area=Proyectos&item=Casos%20de%20%C3%89xito&case=${escapeAttribute(caseItem.slug)}">Ver Proyecto</a>
+    <a class="success-case-link" href="/casos-de-exito/${escapeAttribute(caseItem.slug)}">Ver Proyecto</a>
   </article>
 `;
 
@@ -1462,8 +1517,8 @@ const renderSuccessCasesPage = () => {
   const grid = document.querySelector("[data-success-grid]");
   const filter = document.querySelector("[data-success-filter]");
   const cases = window.USCOM_SUCCESS_CASES || [];
-  const params = new URLSearchParams(window.location.search);
-  const selectedCase = cases.find((caseItem) => caseItem.slug === params.get("case"));
+  const route = getRouteState();
+  const selectedCase = cases.find((caseItem) => caseItem.slug === route.caseSlug);
 
   if (!section || !grid || !filter || !cases.length) {
     return;
@@ -1721,9 +1776,9 @@ const renderContactPage = () => {
 };
 
 if (pageHero) {
-  const params = new URLSearchParams(window.location.search);
-  const area = params.get("area") || "USCOM";
-  const item = params.get("item") || "Página interna";
+  const route = getRouteState();
+  const area = route.area;
+  const item = route.item;
   const solution = area === "Soluciones" ? solutionContent[item] : null;
   const isSuccessCasesPage = area === "Proyectos" && item === "Casos de Éxito";
   const isAboutPage = area === "Nosotros";
@@ -1779,6 +1834,7 @@ if (pageHero) {
 window.addEventListener("load", () => {
   const currentLanguage = getCurrentLanguage();
   persistSiteLanguage(currentLanguage);
+  cleanLanguageUrl();
   preserveLanguageLinks();
 
   if (currentLanguage === "es") {
