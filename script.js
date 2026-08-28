@@ -597,7 +597,7 @@ document.querySelectorAll(".footer").forEach((footer) => {
   footer.innerHTML = `
     <div class="footer-bg" aria-hidden="true"></div>
     <div class="footer-content">
-      <p>© 2026. Todos los derechos reservados. <a href="page.html?area=Contacto&item=Solicitar%20Asesor%C3%ADa">Términos y condiciones.</a></p>
+      <p>© 2026. Todos los derechos reservados. <a href="terms.html">Términos y condiciones.</a></p>
       <div class="footer-made">
         <span>Hecho por</span>
         <strong>Gobierno y Defensa</strong>
