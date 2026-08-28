@@ -294,18 +294,6 @@ const translationDictionary = {
 };
 
 const getCurrentLanguage = () => {
-  const storedLanguage = window.localStorage.getItem("uscomLanguage");
-
-  if (storedLanguage && languageNames[storedLanguage]) {
-    return storedLanguage;
-  }
-
-  const ownCookie = document.cookie.match(/(?:^|;\s*)uscomLanguage=([^;]+)/);
-
-  if (ownCookie?.[1] && languageNames[ownCookie[1]]) {
-    return ownCookie[1];
-  }
-
   return "es";
 };
 
@@ -446,6 +434,10 @@ const preserveLanguageLinks = () => {
 };
 
 const updateLanguageControl = (language) => {
+  if (!languageLabel || !languageMenu) {
+    return;
+  }
+
   languageLabel.textContent = languageNames[language] || languageNames.es;
   languageMenu.querySelectorAll("[data-language-option]").forEach((button) => {
     const isActive = button.dataset.languageOption === language;
