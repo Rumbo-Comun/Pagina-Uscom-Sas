@@ -1696,6 +1696,14 @@ textarea:focus {
   pointer-events: none;
 }
 
+.turnstile-field {
+  min-height: 65px;
+}
+
+.turnstile-field:empty {
+  display: none;
+}
+
 .form-status {
   min-height: 22px;
   margin: 0;

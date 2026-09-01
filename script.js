@@ -615,6 +615,51 @@ nav.addEventListener("click", (event) => {
 });
 
 const contactForm = document.querySelector(".contact-form");
+let turnstileWidgetId = null;
+
+const getTurnstileSiteKey = () => window.USCOM_ENV?.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
+
+const resetContactTurnstile = () => {
+  const tokenField = contactForm?.querySelector("[data-turnstile-token]");
+
+  if (tokenField) {
+    tokenField.value = "";
+  }
+
+  if (window.turnstile && turnstileWidgetId !== null) {
+    window.turnstile.reset(turnstileWidgetId);
+  }
+};
+
+const renderContactTurnstile = () => {
+  if (!contactForm || !window.turnstile || turnstileWidgetId !== null) {
+    return;
+  }
+
+  const siteKey = getTurnstileSiteKey();
+  const container = contactForm.querySelector("[data-turnstile-widget]");
+  const tokenField = contactForm.querySelector("[data-turnstile-token]");
+
+  if (!siteKey || !container || !tokenField) {
+    return;
+  }
+
+  turnstileWidgetId = window.turnstile.render(container, {
+    sitekey: siteKey,
+    theme: "light",
+    callback(token) {
+      tokenField.value = token;
+    },
+    "expired-callback"() {
+      tokenField.value = "";
+    },
+    "error-callback"() {
+      tokenField.value = "";
+    }
+  });
+};
+
+window.onTurnstileReady = renderContactTurnstile;
 const carousel = document.querySelector("[data-carousel-track]");
 const carouselPrev = document.querySelector("[data-carousel-prev]");
 const carouselNext = document.querySelector("[data-carousel-next]");
@@ -655,6 +700,8 @@ logoCards.forEach((card) => {
 });
 
 if (contactForm) {
+  renderContactTurnstile();
+
   contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -684,6 +731,7 @@ if (contactForm) {
       }
 
       form.reset();
+      resetContactTurnstile();
       button.textContent = "Solicitud enviada";
       if (status) {
         status.textContent = "Gracias. Hemos recibido su mensaje y nuestro equipo se pondrá en contacto.";
@@ -692,6 +740,7 @@ if (contactForm) {
     } catch (error) {
       button.textContent = originalButtonText;
       button.disabled = false;
+      resetContactTurnstile();
       if (status) {
         status.textContent = error.message || "No fue posible enviar la solicitud. Intente nuevamente.";
         status.classList.add("is-error");
