@@ -2,8 +2,6 @@ const header = document.querySelector("[data-header]");
 const nav = document.querySelector("[data-nav]");
 const navToggle = document.querySelector("[data-nav-toggle]");
 const navParents = document.querySelectorAll(".nav-parent");
-const brandIntro = document.querySelector("[data-brand-intro]");
-const introVideo = document.querySelector("[data-intro-video]");
 const languageSwitcher = document.querySelector("[data-language-switcher]");
 const languageTrigger = document.querySelector("[data-language-trigger]");
 const languageMenu = document.querySelector("[data-language-menu]");
@@ -457,7 +455,7 @@ const getTranslatableTextNodes = () => {
         return NodeFilter.FILTER_REJECT;
       }
 
-      if (parent.closest(".language-switcher, .brand-intro, .intro-video, .hero-bg")) {
+      if (parent.closest(".language-switcher, .hero-bg")) {
         return NodeFilter.FILTER_REJECT;
       }
 
@@ -576,38 +574,6 @@ if (languageSwitcher && languageTrigger && languageMenu && languageLabel) {
       closeLanguageMenu();
     }
   });
-}
-
-if (brandIntro) {
-  const introAlreadyPlayed = window.sessionStorage.getItem("uscomIntroPlayed") === "true";
-  let introFallback;
-
-  const finishIntro = () => {
-    window.clearTimeout(introFallback);
-    window.sessionStorage.setItem("uscomIntroPlayed", "true");
-    brandIntro.classList.add("is-hidden");
-    document.body.classList.remove("is-intro-running");
-  };
-
-  const scheduleIntroFallback = () => {
-    const videoDuration = introVideo?.duration;
-    const fallbackDelay = Number.isFinite(videoDuration) ? (videoDuration + 1.2) * 1000 : 14000;
-
-    window.clearTimeout(introFallback);
-    introFallback = window.setTimeout(finishIntro, fallbackDelay);
-  };
-
-  if (introAlreadyPlayed) {
-    brandIntro.classList.add("is-hidden");
-  } else {
-    document.body.classList.add("is-intro-running");
-    introVideo?.addEventListener("loadedmetadata", scheduleIntroFallback, { once: true });
-    introVideo?.addEventListener("ended", finishIntro, { once: true });
-    introVideo?.play?.().catch(() => {
-      window.setTimeout(finishIntro, 1200);
-    });
-    scheduleIntroFallback();
-  }
 }
 
 const setHeaderState = () => {
@@ -1842,15 +1808,6 @@ window.addEventListener("load", () => {
   persistSiteLanguage(currentLanguage);
   cleanLanguageUrl();
   preserveLanguageLinks();
-
-  if (currentLanguage === "es") {
-    restoreOriginalLanguage();
-    updateLanguageControl("es");
-  } else {
-    window.setTimeout(() => {
-      applySiteLanguage(currentLanguage);
-    }, 700);
-  }
 });
 
 if (languageSwitcher) {
